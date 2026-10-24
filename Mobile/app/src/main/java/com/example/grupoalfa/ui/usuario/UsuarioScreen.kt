@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -30,8 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.grupoalfa.data.model.Usuario
 import com.example.grupoalfa.ui.theme.AlfaWhite
 import com.example.grupoalfa.ui.theme.Amber
 import com.example.grupoalfa.ui.theme.BlueWash
@@ -61,54 +65,125 @@ private data class UsuarioUiModel(
             .joinToString("")
 }
 
-private val usuarioDemo = UsuarioUiModel(
-    nombre = "Camila",
-    apellidoPaterno = "Rojas",
-    apellidoMaterno = "Medina",
-    rol = "Administración",
-    correo = "camila.rojas@grupoalfa.cl",
-    carnet = "2026-0041",
-    estado = "Vigente"
+private fun Usuario.toUiModel(): UsuarioUiModel = UsuarioUiModel(
+    nombre = nombre,
+    apellidoPaterno = apellidoPaterno.orEmpty(),
+    apellidoMaterno = apellidoMaterno.orEmpty(),
+    rol = rolPrincipal ?: "Sin rol asignado",
+    correo = correoElectronico ?: "—",
+    carnet = nroCarnet?.toString() ?: "—",
+    estado = when (usuarioVigente) {
+        true -> "Vigente"
+        false -> "Inactivo"
+        null -> "—"
+    }
 )
 
 @Composable
 fun UsuarioScreen(
     onLogout: () -> Unit,
     onGoToLista: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: UsuarioViewModel = viewModel()
+) {
+    val uiState = viewModel.uiState
+    val usuario = uiState.usuario
+
+    Box(modifier = modifier.fillMaxSize()) {
+        when {
+            uiState.cargando && usuario == null -> {
+                LoadingState(modifier = Modifier.align(Alignment.Center))
+            }
+
+            usuario == null -> {
+                ErrorState(
+                    mensaje = uiState.error.orEmpty(),
+                    onRetry = viewModel::cargarPerfil,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    ProfileHero(usuario = usuario.toUiModel())
+
+                    AccountCard(
+                        usuario = usuario.toUiModel(),
+                        onGoToLista = onGoToLista
+                    )
+
+                    OutlinedButton(
+                        onClick = onLogout,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.38f)
+                        ),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(
+                            text = "Cerrar sesión",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingState(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        CircularProgressIndicator()
+        Text(
+            text = "Cargando tu perfil…",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+@Composable
+private fun ErrorState(
+    mensaje: String,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ProfileHero(usuario = usuarioDemo)
-
-        AccountCard(
-            usuario = usuarioDemo,
-            onGoToLista = onGoToLista
+        Text(
+            text = "No pudimos cargar tu perfil",
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
         )
-
-        OutlinedButton(
-            onClick = onLogout,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.error.copy(alpha = 0.38f)
-            ),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.error
-            )
-        ) {
-            Text(
-                text = "Cerrar sesión",
-                style = MaterialTheme.typography.titleMedium
-            )
+        Text(
+            text = mensaje.ifBlank { "Intenta nuevamente." },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
+        )
+        OutlinedButton(onClick = onRetry) {
+            Text("Reintentar")
         }
     }
 }

@@ -9,6 +9,7 @@ export const DATABASE_URL =
   `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}:${DB_PORT}/${encodeURIComponent(DB_DATABASE)}`;
 
 export const PORT = process.env.PORT || 4000;
+export const HOST = process.env.HOST || "0.0.0.0";
 
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";

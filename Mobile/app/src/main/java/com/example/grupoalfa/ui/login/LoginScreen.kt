@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -25,17 +26,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -49,6 +46,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.grupoalfa.ui.components.BrandMark
 import com.example.grupoalfa.ui.theme.AlfaWhite
 import com.example.grupoalfa.ui.theme.Amber
@@ -60,24 +58,16 @@ import com.example.grupoalfa.ui.theme.NavyDeep
 @Composable
 fun LoginScreen(
     onLogin: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = viewModel()
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var error by rememberSaveable { mutableStateOf("") }
-
+    val uiState = viewModel.uiState
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
     val submitLogin: () -> Unit = {
-        if (email.isBlank() || password.isBlank()) {
-            error = "Completa tu correo y contraseña para continuar."
-        } else {
-            error = ""
-            focusManager.clearFocus()
-            onLogin()
-        }
+        focusManager.clearFocus()
+        viewModel.login { onLogin() }
     }
 
     Box(
@@ -124,19 +114,14 @@ fun LoginScreen(
                         .verticalScroll(scrollState)
                 ) {
                     LoginCard(
-                        email = email,
-                        password = password,
-                        passwordVisible = passwordVisible,
-                        error = error,
-                        onEmailChange = {
-                            email = it
-                            error = ""
-                        },
-                        onPasswordChange = {
-                            password = it
-                            error = ""
-                        },
-                        onTogglePassword = { passwordVisible = !passwordVisible },
+                        email = uiState.identificador,
+                        password = uiState.contrasena,
+                        passwordVisible = uiState.contrasenaVisible,
+                        error = uiState.error.orEmpty(),
+                        cargando = uiState.cargando,
+                        onEmailChange = viewModel::onIdentificadorChange,
+                        onPasswordChange = viewModel::onContrasenaChange,
+                        onTogglePassword = viewModel::toggleContrasenaVisible,
                         onSubmit = submitLogin,
                         onPasswordDone = submitLogin,
                         onNextField = { focusManager.moveFocus(FocusDirection.Down) }
@@ -183,6 +168,7 @@ private fun LoginCard(
     password: String,
     passwordVisible: Boolean,
     error: String,
+    cargando: Boolean,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePassword: () -> Unit,
@@ -278,6 +264,7 @@ private fun LoginCard(
 
             Button(
                 onClick = onSubmit,
+                enabled = !cargando,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -287,10 +274,18 @@ private fun LoginCard(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text(
-                    text = "Ingresar",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                if (cargando) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(
+                        text = "Ingresar",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
 
             Text(

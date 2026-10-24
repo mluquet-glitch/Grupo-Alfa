@@ -10,17 +10,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.grupoalfa.data.remote.RetrofitClient
+import com.example.grupoalfa.data.repository.UsuarioRepository
 import com.example.grupoalfa.ui.components.BrandMark
 import com.example.grupoalfa.ui.components.GrupoAlfaBottomBar
 import com.example.grupoalfa.ui.components.MainTab
@@ -32,8 +36,11 @@ import com.example.grupoalfa.ui.usuario.UsuarioScreen
 
 @Composable
 fun GrupoAlfaApp() {
-    var loggedIn by rememberSaveable { mutableStateOf(false) }
+    var loggedIn by rememberSaveable {
+        mutableStateOf(RetrofitClient.authToken != null)
+    }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    val usuarioRepository = remember { UsuarioRepository() }
 
     val selectedTab = MainTab.entries[selectedTabIndex]
 
@@ -50,7 +57,10 @@ fun GrupoAlfaApp() {
     MainShell(
         selectedTab = selectedTab,
         onTabSelected = { selectedTabIndex = it.ordinal },
-        onLogout = { loggedIn = false }
+        onLogout = {
+            usuarioRepository.cerrarSesion()
+            loggedIn = false
+        }
     )
 }
 
@@ -90,7 +100,16 @@ private fun MainShell(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Navy,
                     titleContentColor = AlfaWhite
-                )
+                ),
+                actions = {
+                    TextButton(onClick = onLogout) {
+                        Text(
+                            text = "Salir",
+                            color = AlfaWhite,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
             )
         },
         bottomBar = {

@@ -1,4 +1,5 @@
 import express from "express";
+import os from "node:os";
 import usuariosRoutes from "./routes/usuarios.routes.js";
 import materiasRoutes from "./routes/materias.routes.js";
 import asesoresRoutes from "./routes/asesores.routes.js";
@@ -27,7 +28,7 @@ import avancesRoutes from "./routes/avances.routes.js";
 import mensualidadesRoutes from "./routes/mensualidades.routes.js";
 import asistenciasRoutes from "./routes/asistencias.routes.js";
 import morgan from "morgan";
-import { PORT } from "./config.js";
+import { PORT, HOST } from "./config.js";
 import { config } from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -85,6 +86,26 @@ app.use("/api", asistenciasRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT);
-// eslint-disable-next-line no-console
-console.log("Server on port", PORT);
+function getLanAddresses() {
+  return Object.values(os.networkInterfaces())
+    .flat()
+    .filter(
+      (network) =>
+        network &&
+        !network.internal &&
+        (network.family === "IPv4" || network.family === 4)
+    )
+    .map((network) => network.address);
+}
+
+app.listen(PORT, HOST, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Servidor escuchando en http://127.0.0.1:${PORT} (${HOST}:${PORT})`);
+
+  if (HOST === "0.0.0.0" || HOST === "::") {
+    getLanAddresses().forEach((address) => {
+      // eslint-disable-next-line no-console
+      console.log(`Accesible desde la red local en http://${address}:${PORT}`);
+    });
+  }
+});

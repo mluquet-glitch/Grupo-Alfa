@@ -7,10 +7,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    // Emulador -> localhost del PC. En dispositivo físico usar la IP LAN del PC.
-    private const val BASE_URL = "http://10.0.2.2:4000/api/"
+    /**
+     * IP LAN de la laptop donde corre el backend (puerto 4000).
+     * El teléfono debe estar conectado a la misma red Wi-Fi.
+     *
+     * Si el emulador no alcanza esta IP, se puede usar:
+     * "http://10.0.2.2:4000/api/"
+     */
+    private const val BASE_URL = "http://10.138.132.36:4000/api/"
 
-    // TODO: reemplazar por el token JWT real (DataStore / login).
+    /** Token JWT de la sesión actual, seteado por el login. */
+    @Volatile
     var authToken: String? = null
 
     private val logging = HttpLoggingInterceptor().apply {
@@ -20,7 +27,7 @@ object RetrofitClient {
     private val authInterceptor = okhttp3.Interceptor { chain ->
         val original = chain.request()
         val builder = original.newBuilder()
-        authToken?.let { builder.addHeader("Authorization", "Bearer $it") }
+        authToken?.let { builder.header("Authorization", "Bearer $it") }
         chain.proceed(builder.build())
     }
 

@@ -10,8 +10,12 @@ data class Usuario(
     @SerializedName("nombre") val nombre: String,
     @SerializedName("fecha_nacimiento") val fechaNacimiento: String?,
     @SerializedName("correo_electronico") val correoElectronico: String?,
-    @SerializedName("usuario_vigente") val usuarioVigente: Boolean?
+    @SerializedName("usuario_vigente") val usuarioVigente: Boolean?,
+    @SerializedName("roles") val roles: List<String>? = null
 ) {
     val nombreCompleto: String
         get() = listOfNotNull(nombre, apellidoPaterno, apellidoMaterno).joinToString(" ")
+
+    val rolPrincipal: String?
+        get() = roles?.firstOrNull()
 }
