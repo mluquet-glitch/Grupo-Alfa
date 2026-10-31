@@ -14,6 +14,7 @@ export const ENTITIES = {
     endpoint: "usuarios",
     pk: "id_usuario",
     columns: [
+      { key: "id_usuario", label: "ID" },
       { key: "nro_carnet", label: "Carnet" },
       { key: "nombre_completo", label: "Nombre" },
       { key: "correo_electronico", label: "Correo" },
@@ -76,6 +77,7 @@ export const ENTITIES = {
       { key: "nivel", label: "Nivel" },
       { key: "modalidad", label: "Modalidad" },
       { key: "fecha_inicio", label: "Inicio" },
+      { key: "fecha_fin", label: "Fin" },
     ],
     fields: [
       { name: "id_convocatoria", label: "ID convocatoria", type: "number", required: true },
@@ -84,6 +86,7 @@ export const ENTITIES = {
       { name: "nivel", label: "Nivel", type: "text", required: false, maxLength: 100 },
       { name: "modalidad", label: "Modalidad", type: "text", required: false, maxLength: 50 },
       { name: "fecha_inicio", label: "Fecha de inicio", type: "date", required: false },
+      { name: "fecha_fin", label: "Fecha de fin", type: "date", required: false },
       { name: "hora_inicio", label: "Hora inicio", type: "time", required: false },
       { name: "hora_fin", label: "Hora fin", type: "time", required: false },
     ],

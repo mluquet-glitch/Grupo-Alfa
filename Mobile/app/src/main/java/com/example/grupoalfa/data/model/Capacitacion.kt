@@ -9,6 +9,7 @@ data class Capacitacion(
     @SerializedName("nivel") val nivel: String?,
     @SerializedName("modalidad") val modalidad: String?,
     @SerializedName("fecha_inicio") val fechaInicio: String?,
+    @SerializedName("fecha_fin") val fechaFin: String?,
     @SerializedName("hora_inicio") val horaInicio: String?,
     @SerializedName("hora_fin") val horaFin: String?
 )

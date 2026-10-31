@@ -87,7 +87,7 @@ src/
 |---|---|---|---|---|---|
 | materias | `/materias` | `id_materia` | nombre_materia | `nombre_materia` string 1–150 req | — |
 | asesores | `/asesores` | `id_asesor` | asesor + usuario (nombre, apellidos, correo) | `id_usuario` int positivo req, existe en usuarios | JOIN a `usuarios`; fix SQL injection previo |
-| capacitaciones | `/capacitaciones` | `id_capacitacion` | nombre, nivel, modalidad, fecha_inicio, hora_inicio/fin, convocatoria, aula | `id_convocatoria*`, `id_aula*`, `nombre*` 1–150, `nivel`, `modalidad`, `fecha_inicio`, `hora_inicio/hora_fin HH:MM` + refine fin>inicio | Tabla real `cursos_capacitacion`; FK RESTRICT exige semilla válida |
+| capacitaciones | `/capacitaciones` | `id_capacitacion` | nombre, nivel, modalidad, fecha_inicio/fin, hora_inicio/fin, convocatoria, aula | `id_convocatoria*`, `id_aula*`, `nombre*` 1–150, `nivel`, `modalidad`, `fecha_inicio`, `fecha_fin` + refine fin≥inicio, `hora_inicio/hora_fin HH:MM` + refine fin>inicio | Tabla real `cursos_capacitacion`; FK RESTRICT exige semilla válida |
 | temas | `/temas` | `id_tema` | nombre_tema, materia | `nombre_tema*` 1–150, `id_materia?` nulleable | Filtro `GET /temas?id_materia=X`; JOIN `materias(nombre_materia)`; confirmar nombre exacto de columna (`\d temas`) |
 | estudiantes | `/estudiantes` | `id_estudiante` | usuario, apoderado, colegio, dirección | `id_usuario*` (existe), `id_apoderado?` (existe), `colegio_de_procedencia?` ≤150, `direccion_de_domicilio?` ≤255 | `SELECT`/`INSERT`/`UPDATE` sin `foto`; posible 409 si usuario ya es estudiante |
 

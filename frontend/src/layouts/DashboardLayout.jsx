@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom"
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import Sidebar from "../components/dashboard/Sidebar"
 import { ENTITIES } from "../config/entities"
 import { useAuth } from "../hooks/useAuth"
@@ -13,9 +13,13 @@ export default function DashboardLayout() {
       ? "Dashboard"
       : key === "pase-lista"
         ? "Llamar lista"
-        : key === "sin-acceso"
-          ? "Acceso denegado"
-          : (ENTITIES[key]?.label ?? "Dashboard")
+        : key === "perfil"
+          ? "Mi perfil"
+          : key === "datos"
+            ? "Explorador de datos"
+            : key === "sin-acceso"
+              ? "Acceso denegado"
+              : (ENTITIES[key]?.label ?? "Dashboard")
 
   const handleSignOut = () => {
     signOut()
@@ -33,6 +37,9 @@ export default function DashboardLayout() {
           </div>
           <div className="header-user">
             <span className="muted">{loggedUser?.nombre ?? "Usuario"}</span>
+            <Link className="header-profile-link" to="/app/perfil">
+              Mi perfil
+            </Link>
             <button className="secondary-button small" type="button" onClick={handleSignOut}>
               Cerrar sesión
             </button>

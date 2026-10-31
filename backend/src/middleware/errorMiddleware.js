@@ -35,6 +35,12 @@ const errorHandler = (err, req, res, next) => {
     err.message = "Parámetro inválido";
   }
 
+  // pg check constraint violation
+  if (err.code === "23514" && err.constraint === "chk_cursos_capacitacion_fechas") {
+    err.statusCode = 400;
+    err.message = "La fecha de fin no puede ser anterior a la fecha de inicio";
+  }
+
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,

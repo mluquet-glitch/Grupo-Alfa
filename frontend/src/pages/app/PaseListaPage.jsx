@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import Skeleton from "../../components/ui/Skeleton"
 import ErrorFallback from "../../components/ui/ErrorFallback"
 import { loadPaseListaCatalogs } from "../../services/paseListaService"
@@ -15,11 +16,19 @@ const TAB_LABELS = { asistencias: "Asistencias", "tomar-clase": "Tomar clase" }
 const TAB_PRELOAD = { asistencias: loadAsistencias, "tomar-clase": loadTomarClase }
 
 export default function PaseListaPage() {
-  const [active, setActive] = useState("asistencias")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requestedTab = searchParams.get("tab")
+  const active = TABS.includes(requestedTab) ? requestedTab : "asistencias"
   const [catalogs, setCatalogs] = useState({ materias: [], asesores: [], capacitaciones: [], temas: [], estudiantes: [], usuarios: [], aulas: [] })
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [listVersion, setListVersion] = useState(0)
+
+  const handleTabChange = (key) => {
+    const next = new URLSearchParams(searchParams)
+    next.set("tab", key)
+    setSearchParams(next, { replace: true })
+  }
 
   useEffect(() => {
     let mounted = true
@@ -53,7 +62,7 @@ export default function PaseListaPage() {
             aria-selected={active === key}
             type="button"
             className={active === key ? "toggle-chip active" : "toggle-chip"}
-            onClick={() => setActive(key)}
+            onClick={() => handleTabChange(key)}
             onMouseEnter={TAB_PRELOAD[key]}
             onFocus={TAB_PRELOAD[key]}
           >

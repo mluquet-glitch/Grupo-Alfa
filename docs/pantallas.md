@@ -267,7 +267,7 @@ La pantalla tiene dos grupos independientes de pestañas:
 
 | Pestaña | Descripción | Columnas |
 |---|---|---|
-| **Capacitaciones** | Cursos de capacitación. Requieren convocatoria y aula existentes. | ID, Nombre, Nivel, Modalidad, Inicio |
+| **Capacitaciones** | Cursos de capacitación. Requieren convocatoria y aula existentes. | ID, Nombre, Nivel, Modalidad, Inicio, Fin |
 | **Convocatorias** | Convocatorias de preuniversitario. Requieren facultad existente. | ID, Facultad (ID), Inicio |
 | **Facultades** | Facultades a las que pertenecen carreras y convocatorias. | ID, Nombre |
 | **Aulas** | Aulas donde se dictan los cursos. | ID, Capacidad |
@@ -289,8 +289,9 @@ Solo se monta la pestaña activa; las demás no consultan datos.
   - Nombre (obligatorio, máx. 150).
   - Nivel (opcional, máx. 100).
   - Modalidad (opcional, máx. 50).
-  - Fecha de inicio (opcional).
+  - Fecha de inicio / Fecha de fin (opcionales).
   - Hora inicio / Hora fin (opcionales).
+  - Validación: la fecha de fin no puede ser anterior a la fecha de inicio.
   - Validación: la hora de fin debe ser mayor que la de inicio.
 - **Convocatorias**
   - ID facultad (obligatorio).

@@ -1,6 +1,7 @@
 export const ACCESS_ROLE_GROUPS = {
   management: ["SysAdmin", "Rooter", "Gerencia"],
   academic: ["SysAdmin", "Rooter", "Gerencia", "Cajero", "Administración"],
+  sysadmin: ["SysAdmin"],
 }
 
 // Módulos visibles en la aplicación. La autorización real también se valida en la API.
@@ -18,6 +19,7 @@ export const MODULE_ACCESS = {
   matriculaciones: "academic",
   mensualidades: "academic",
   "pase-lista": "academic",
+  datos: "sysadmin",
 }
 
 const DEFAULT_MODULE_ORDER = [
@@ -51,6 +53,7 @@ export function canAccessPath(user, pathname) {
     return getDefaultAppPath(user) !== "/app/sin-acceso"
   }
   if (pathname === "/app/sin-acceso") return true
+  if (pathname === "/app/perfil") return true
 
   const match = pathname.match(/^\/app\/([^/?#]+)/)
   if (!match) return false

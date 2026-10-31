@@ -247,17 +247,17 @@ INSERT INTO postulaciones (id_postulacion, id_estudiante, id_carrera) VALUES
 -- 9. CURSOS_CAPACITACION (10), EXAMENES_DE_INGRESO (10),
 --    MATERIAS_CONVOCATORIA_ASIGNACION (10)
 -- ---------------------------------------------------------------------------
-INSERT INTO cursos_capacitacion (id_capacitacion, id_convocatoria, id_aula, nivel, nombre, modalidad, fecha_inicio, hora_inicio, hora_fin) VALUES
- (1, 1, 1, 'Iniciando', 'Preu Ingeniería Intensivo', 'Presencial', '2025-01-20', '08:00', '12:00'),
- (2, 2, 2, 'Intermedio', 'Preu Medicina Mañana', 'Presencial', '2025-02-05', '08:00', '12:00'),
- (3, 3, 3, 'Avanzado', 'Preu Derecho Tarde', 'Presencial', '2025-02-20', '14:00', '18:00'),
- (4, 4, 4, 'Iniciando', 'Preu Economía Noche', 'Virtual', '2025-03-05', '19:00', '21:30'),
- (5, 5, 5, 'Intermedio', 'Preu Arquitectura', 'Presencial', '2025-03-20', '09:00', '13:00'),
- (6, 6, 6, 'Avanzado', 'Preu Ciencias Puras', 'Híbrida', '2025-04-05', '08:30', '12:30'),
- (7, 7, 7, 'Iniciando', 'Preu Ingeniería II-2025', 'Presencial', '2025-07-20', '08:00', '12:00'),
- (8, 8, 8, 'Intermedio', 'Preu Tecnología', 'Virtual', '2025-08-05', '19:00', '21:30'),
- (9, 9, 9, 'Avanzado', 'Preu Humanidades', 'Presencial', '2025-08-20', '14:00', '18:00'),
- (10, 10, 10, 'Iniciando', 'Preu Medicina 2026', 'Híbrida', '2026-01-15', '08:00', '12:00');
+INSERT INTO cursos_capacitacion (id_capacitacion, id_convocatoria, id_aula, nivel, nombre, modalidad, fecha_inicio, fecha_fin, hora_inicio, hora_fin) VALUES
+ (1, 1, 1, 'Iniciando', 'Preu Ingeniería Intensivo', 'Presencial', '2025-01-20', '2025-03-15', '08:00', '12:00'),
+ (2, 2, 2, 'Intermedio', 'Preu Medicina Mañana', 'Presencial', '2025-02-05', '2025-03-30', '08:00', '12:00'),
+ (3, 3, 3, 'Avanzado', 'Preu Derecho Tarde', 'Presencial', '2025-02-20', '2025-04-15', '14:00', '18:00'),
+ (4, 4, 4, 'Iniciando', 'Preu Economía Noche', 'Virtual', '2025-03-05', '2025-04-30', '19:00', '21:30'),
+ (5, 5, 5, 'Intermedio', 'Preu Arquitectura', 'Presencial', '2025-03-20', '2025-05-15', '09:00', '13:00'),
+ (6, 6, 6, 'Avanzado', 'Preu Ciencias Puras', 'Híbrida', '2025-04-05', '2025-05-31', '08:30', '12:30'),
+ (7, 7, 7, 'Iniciando', 'Preu Ingeniería II-2025', 'Presencial', '2025-07-20', '2025-09-15', '08:00', '12:00'),
+ (8, 8, 8, 'Intermedio', 'Preu Tecnología', 'Virtual', '2025-08-05', '2025-09-30', '19:00', '21:30'),
+ (9, 9, 9, 'Avanzado', 'Preu Humanidades', 'Presencial', '2025-08-20', '2025-10-15', '14:00', '18:00'),
+ (10, 10, 10, 'Iniciando', 'Preu Medicina 2026', 'Híbrida', '2026-01-15', '2026-03-15', '08:00', '12:00');
 
 INSERT INTO examenes_de_ingreso (id_examen_de_ingreso, id_convocatoria, id_materia, foto) VALUES
  (1, 1, 1, NULL),

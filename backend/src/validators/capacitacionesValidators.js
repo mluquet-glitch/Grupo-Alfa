@@ -25,12 +25,30 @@ const capacitacionSchema = z.object({
       message: "La fecha de inicio debe ser una fecha válida",
     })
     .optional(),
+  fecha_fin: z
+    .string()
+    .trim()
+    .refine((v) => !Number.isNaN(new Date(v).getTime()), {
+      message: "La fecha de fin debe ser una fecha válida",
+    })
+    .optional(),
   hora_inicio: z.string().trim().regex(horaRegex, "La hora de inicio debe tener formato HH:MM").optional(),
   hora_fin: z.string().trim().regex(horaRegex, "La hora de fin debe tener formato HH:MM").optional(),
 });
 
-const base = capacitacionSchema;
-const createCapacitacionSchema = base;
-const updateCapacitacionSchema = base.partial();
+const validarFechas = (data) =>
+  !data.fecha_inicio ||
+  !data.fecha_fin ||
+  new Date(data.fecha_fin).getTime() >= new Date(data.fecha_inicio).getTime();
+
+const createCapacitacionSchema = capacitacionSchema.refine(validarFechas, {
+  message: "La fecha de fin no puede ser anterior a la fecha de inicio",
+  path: ["fecha_fin"],
+});
+
+const updateCapacitacionSchema = capacitacionSchema.partial().refine(validarFechas, {
+  message: "La fecha de fin no puede ser anterior a la fecha de inicio",
+  path: ["fecha_fin"],
+});
 
 export { createCapacitacionSchema, updateCapacitacionSchema };

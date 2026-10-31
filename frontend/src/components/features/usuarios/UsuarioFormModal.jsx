@@ -134,65 +134,69 @@ export default function UsuarioFormModal({
     >
       <Modal.Body>
         <form onSubmit={handleSubmit}>
-          <TextField
-            id="u-nro_carnet"
-            label="Nro de carnet"
-            type="number"
-            value={values.nro_carnet}
-            onChange={(event) => set("nro_carnet", event.target.value)}
-            required
-          />
-          <TextField
-            id="u-nombre"
-            label="Nombre"
-            value={values.nombre}
-            onChange={(event) => set("nombre", event.target.value)}
-            maxLength={100}
-            required
-          />
-          <TextField
-            id="u-apellido_paterno"
-            label="Apellido paterno"
-            value={values.apellido_paterno}
-            onChange={(event) => set("apellido_paterno", event.target.value)}
-            maxLength={100}
-            required
-          />
-          <TextField
-            id="u-apellido_materno"
-            label="Apellido materno"
-            value={values.apellido_materno}
-            onChange={(event) => set("apellido_materno", event.target.value)}
-            maxLength={100}
-            required
-          />
-          <TextField
-            id="u-fecha_nacimiento"
-            label="Fecha de nacimiento"
-            type="date"
-            value={values.fecha_nacimiento}
-            onChange={(event) => set("fecha_nacimiento", event.target.value)}
-            required
-          />
-          <TextField
-            id="u-correo_electronico"
-            label="Correo electrónico"
-            type="email"
-            value={values.correo_electronico}
-            onChange={(event) => set("correo_electronico", event.target.value)}
-            maxLength={150}
-            autoComplete="email"
-            required
-          />
-          <TextField
-            id="u-contraseña"
-            label={isCreate ? "Contraseña" : "Contraseña (vacía = no cambia)"}
-            type="password"
-            value={values.contraseña}
-            onChange={(event) => set("contraseña", event.target.value)}
-            autoComplete="new-password"
-            required={isCreate}
-          />
+          <div className="form-grid-two">
+            <TextField
+              id="u-nro_carnet"
+              label="Nro de carnet"
+              type="number"
+              value={values.nro_carnet}
+              onChange={(event) => set("nro_carnet", event.target.value)}
+              required
+            />
+            <TextField
+              id="u-nombre"
+              label="Nombre"
+              value={values.nombre}
+              onChange={(event) => set("nombre", event.target.value)}
+              maxLength={100}
+              required
+            />
+            <TextField
+              id="u-apellido_paterno"
+              label="Apellido paterno"
+              value={values.apellido_paterno}
+              onChange={(event) => set("apellido_paterno", event.target.value)}
+              maxLength={100}
+              required
+            />
+            <TextField
+              id="u-apellido_materno"
+              label="Apellido materno"
+              value={values.apellido_materno}
+              onChange={(event) => set("apellido_materno", event.target.value)}
+              maxLength={100}
+              required
+            />
+            <TextField
+              id="u-fecha_nacimiento"
+              label="Fecha de nacimiento"
+              type="date"
+              value={values.fecha_nacimiento}
+              onChange={(event) => set("fecha_nacimiento", event.target.value)}
+              required
+            />
+            <TextField
+              id="u-correo_electronico"
+              label="Correo electrónico"
+              type="email"
+              value={values.correo_electronico}
+              onChange={(event) => set("correo_electronico", event.target.value)}
+              maxLength={150}
+              autoComplete="email"
+              required
+            />
+            <div className="form-grid-span">
+              <TextField
+                id="u-contraseña"
+                label={isCreate ? "Contraseña" : "Contraseña (vacía = no cambia)"}
+                type="password"
+                value={values.contraseña}
+                onChange={(event) => set("contraseña", event.target.value)}
+                autoComplete="new-password"
+                required={isCreate}
+              />
+            </div>
+          </div>
           <div className="form-row form-row-inline">
             <input
               id="u-vigente"

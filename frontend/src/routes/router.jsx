@@ -11,6 +11,8 @@ const LoginPage = lazy(() => import("../pages/auth/LoginPage"))
 // const RegisterPage = lazy(() => import("../pages/auth/RegisterPage"))
 const DashboardPage = lazy(() => import("../pages/app/DashboardPage"))
 const PaseListaPage = lazy(() => import("../pages/app/PaseListaPage"))
+const ProfilePage = lazy(() => import("../pages/app/ProfilePage"))
+const DataExplorerPage = lazy(() => import("../pages/app/DataExplorerPage"))
 const EntityPage = lazy(() => import("../pages/app/EntityPage"))
 const ForbiddenPage = lazy(() => import("../pages/app/ForbiddenPage"))
 const NotFoundPage = lazy(() => import("../pages/app/NotFoundPage"))
@@ -49,6 +51,15 @@ export default function AppRouter() {
           element={
             <RequireModuleAccess moduleKey="pase-lista">
               <PaseListaPage />
+            </RequireModuleAccess>
+          }
+        />
+        <Route path="perfil" element={<ProfilePage />} />
+        <Route
+          path="datos"
+          element={
+            <RequireModuleAccess moduleKey="datos">
+              <DataExplorerPage />
             </RequireModuleAccess>
           }
         />

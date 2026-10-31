@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import { useCrud } from "../../hooks/useCrud"
 import { ENTITIES, getDisplayName } from "../../config/entities"
 import { listResource } from "../../services/academicService"
@@ -93,6 +94,18 @@ function MatriculacionesTab({ catalogs, options }) {
     try { await remove(id) } catch (err) { alert(err.userMessage ?? "No se pudo eliminar.") }
   }
 
+  const fetchEstudiantes = async (term) => {
+    const rows = await listResource("estudiantes", { q: term })
+    return rows.map((e) => {
+      const nombreCompleto = [e.nombre, e.apellido_paterno, e.apellido_materno].filter(Boolean).join(" ")
+      const carnet = e.nro_carnet != null ? ` — Carnet: ${e.nro_carnet}` : ""
+      return {
+        value: e.id_estudiante,
+        label: `${nombreCompleto}${carnet}`,
+      }
+    })
+  }
+
   const handleSubmit = async (payload) => {
     setSaving(true)
     setFormError("")
@@ -126,7 +139,7 @@ function MatriculacionesTab({ catalogs, options }) {
           <MatriculacionFormModal
             key={selected?.id_matriculacion ?? "new"}
             initial={selected}
-            estudianteOptions={options.estudianteOptions}
+            fetchEstudiantes={fetchEstudiantes}
             cursoOptions={options.cursoOptions}
             saving={saving}
             formError={formError}
@@ -212,9 +225,17 @@ function MensualidadesTab({ catalogs, options }) {
 }
 
 export default function MatriculacionesPage() {
-  const [active, setActive] = useState("matriculaciones")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requestedTab = searchParams.get("tab")
+  const active = TABS.includes(requestedTab) ? requestedTab : "matriculaciones"
   const { catalogs, isLoading } = useCatalogs()
   const options = useOptions(catalogs)
+
+  const handleTabChange = (key) => {
+    const next = new URLSearchParams(searchParams)
+    next.set("tab", key)
+    setSearchParams(next, { replace: true })
+  }
 
   if (isLoading) return <Skeleton lines={6} />
 
@@ -228,7 +249,7 @@ export default function MatriculacionesPage() {
             aria-selected={active === key}
             type="button"
             className={active === key ? "toggle-chip active" : "toggle-chip"}
-            onClick={() => setActive(key)}
+            onClick={() => handleTabChange(key)}
           >
             {ENTITIES[key].label}
           </button>

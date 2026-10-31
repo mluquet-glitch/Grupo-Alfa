@@ -21,7 +21,9 @@ const isManagementRoute = (path) =>
   path === "/roles" ||
   path.startsWith("/roles/") ||
   path === "/asignaciones-rol" ||
-  path.startsWith("/asignaciones-rol/");
+  path.startsWith("/asignaciones-rol/") ||
+  path === "/datos" ||
+  path.startsWith("/datos/");
 
 const isAuthenticatedOnlyRoute = (method, path) =>
   method === "GET" && path === "/usuarios/me";

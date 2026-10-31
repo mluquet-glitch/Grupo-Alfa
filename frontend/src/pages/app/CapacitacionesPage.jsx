@@ -1,4 +1,5 @@
 import { Suspense, lazy, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import { ENTITIES } from "../../config/entities"
 import Skeleton from "../../components/ui/Skeleton"
 
@@ -14,10 +15,18 @@ const TABS = ["capacitaciones", "convocatorias", "facultades", "aulas"]
 const CURSOS_TABS = ["materias", "temas"]
 
 export default function CapacitacionesPage() {
-  const [active, setActive] = useState("capacitaciones")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requestedTab = searchParams.get("tab")
+  const active = TABS.includes(requestedTab) ? requestedTab : "capacitaciones"
   const [activeCurso, setActiveCurso] = useState("materias")
   const entity = ENTITIES[active]
   const cursoEntity = ENTITIES[activeCurso]
+
+  const handleTabChange = (key) => {
+    const next = new URLSearchParams(searchParams)
+    next.set("tab", key)
+    setSearchParams(next, { replace: true })
+  }
 
   return (
     <section>
@@ -29,7 +38,7 @@ export default function CapacitacionesPage() {
             aria-selected={active === key}
             type="button"
             className={active === key ? "toggle-chip active" : "toggle-chip"}
-            onClick={() => setActive(key)}
+            onClick={() => handleTabChange(key)}
             onMouseEnter={preloadCrud}
             onFocus={preloadCrud}
           >

@@ -4,13 +4,24 @@ import Modal from "../ui/Modal"
 import TextField from "../ui/TextField"
 import Button from "../ui/Button"
 
+function normalizeInitialValues(entity, initial) {
+  const values = { ...(initial ?? {}) }
+  for (const field of entity.fields) {
+    const value = values[field.name]
+    if (value == null) continue
+    if (field.type === "date") values[field.name] = String(value).slice(0, 10)
+    if (field.type === "time") values[field.name] = String(value).slice(0, 5)
+  }
+  return values
+}
+
 export default function EntityFormModal({ entity, initial, saving, formError, onClose, onSubmit }) {
-  const [values, setValues] = useState(initial ?? {})
+  const [values, setValues] = useState(() => normalizeInitialValues(entity, initial))
   const [localError, setLocalError] = useState("")
 
   useEffect(() => {
-    setValues(initial ?? {})
-  }, [initial])
+    setValues(normalizeInitialValues(entity, initial))
+  }, [entity, initial])
 
   useEffect(() => {
     const onKey = (event) => {
@@ -39,6 +50,12 @@ export default function EntityFormModal({ entity, initial, saving, formError, on
     if (entity.key === "capacitaciones" && values.hora_inicio && values.hora_fin) {
       if (values.hora_fin <= values.hora_inicio) {
         setLocalError("La hora de fin debe ser mayor que la de inicio.")
+        return
+      }
+    }
+    if (entity.key === "capacitaciones" && values.fecha_inicio && values.fecha_fin) {
+      if (values.fecha_fin < values.fecha_inicio) {
+        setLocalError("La fecha de fin no puede ser anterior a la fecha de inicio.")
         return
       }
     }

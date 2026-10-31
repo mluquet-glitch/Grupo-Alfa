@@ -4,7 +4,24 @@ const PUBLIC_COLUMNS = "id_estudiante, id_usuario, id_apoderado, colegio_de_proc
 
 export const getEstudiantes = async (req, res, next) => {
   try {
-    const { rows } = await pool.query(`SELECT ${PUBLIC_COLUMNS} FROM estudiantes ORDER BY id_estudiante ASC`);
+    const { q } = req.query;
+    let query = `
+      SELECT e.id_estudiante, e.id_usuario, e.id_apoderado, e.colegio_de_procedencia, e.direccion_de_domicilio,
+             u.nro_carnet, u.nombre, u.apellido_paterno, u.apellido_materno
+      FROM estudiantes e
+      JOIN usuarios u ON u.id_usuario = e.id_usuario
+    `;
+    const params = [];
+    if (q) {
+      query += ` WHERE u.nombre ILIKE $${params.length + 1}
+                 OR u.apellido_paterno ILIKE $${params.length + 2}
+                 OR u.apellido_materno ILIKE $${params.length + 3}
+                 OR u.nro_carnet::text ILIKE $${params.length + 4}`;
+      const searchTerm = `%${q}%`;
+      params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+    }
+    query += ` ORDER BY e.id_estudiante ASC`;
+    const { rows } = await pool.query(query, params);
     res.status(200).json(rows);
   } catch (error) {
     next(error);

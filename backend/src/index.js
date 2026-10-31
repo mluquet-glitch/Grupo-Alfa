@@ -27,6 +27,7 @@ import clasesRoutes from "./routes/clases.routes.js";
 import avancesRoutes from "./routes/avances.routes.js";
 import mensualidadesRoutes from "./routes/mensualidades.routes.js";
 import asistenciasRoutes from "./routes/asistencias.routes.js";
+import datosRoutes from "./routes/datos.routes.js";
 import morgan from "morgan";
 import { PORT, HOST } from "./config.js";
 import { config } from "dotenv";
@@ -82,6 +83,7 @@ app.use("/api", clasesRoutes);
 app.use("/api", avancesRoutes);
 app.use("/api", mensualidadesRoutes);
 app.use("/api", asistenciasRoutes);
+app.use("/api", datosRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

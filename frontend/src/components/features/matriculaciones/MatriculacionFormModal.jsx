@@ -16,7 +16,7 @@ const toNumberOrUndefined = (value) => {
 
 export default function MatriculacionFormModal({
   initial,
-  estudianteOptions,
+  fetchEstudiantes,
   cursoOptions,
   saving,
   formError,
@@ -70,11 +70,11 @@ export default function MatriculacionFormModal({
             <PersonCombobox
               id="m-estudiante"
               label="Estudiante"
-              options={estudianteOptions}
+              fetchOptions={fetchEstudiantes}
               value={idEstudiante}
               onSelect={setIdEstudiante}
               placeholder="Escribe el nombre del estudiante..."
-              hint="Escribe y elige una sugerencia de la lista."
+              hint="Escribe para buscar estudiantes en el servidor."
             />
           </Suspense>
           <div className="form-row">
@@ -128,7 +128,7 @@ export default function MatriculacionFormModal({
 
 MatriculacionFormModal.propTypes = {
   initial: PropTypes.object,
-  estudianteOptions: PropTypes.array.isRequired,
+  fetchEstudiantes: PropTypes.func.isRequired,
   cursoOptions: PropTypes.array.isRequired,
   saving: PropTypes.bool.isRequired,
   formError: PropTypes.string.isRequired,

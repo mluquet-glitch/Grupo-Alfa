@@ -135,7 +135,7 @@ Control de mensualidades
 - Roles y asignación de roles.
 - Clases, avances y asistencias.
 
-> Los horarios se almacenan como datos del curso de capacitación (`fecha_inicio`, `hora_inicio` y `hora_fin`) y del aula asignada; no existe una pantalla independiente de horarios.
+> Los horarios se almacenan como datos del curso de capacitación (`fecha_inicio`, `fecha_fin`, `hora_inicio` y `hora_fin`) y del aula asignada; no existe una pantalla independiente de horarios.
 
 ---
 
@@ -373,7 +373,7 @@ Sin contenido en el análisis para un módulo implementado de evaluaciones y cal
 
 ## 9.1. Gestión
 
-- Los horarios se registran como parte del curso de capacitación: `fecha_inicio`, `hora_inicio` y `hora_fin`.
+- Los horarios se registran como parte del curso de capacitación: `fecha_inicio`, `fecha_fin`, `hora_inicio` y `hora_fin`.
 - El aula se asigna al curso mediante `cursos_capacitacion.id_aula`.
 - La convocatoria se asigna mediante `cursos_capacitacion.id_convocatoria`.
 - Los asesores se asignan al curso mediante `asignaciones_asesores`.
@@ -639,6 +639,7 @@ El modelo se encuentra en [`dbScripts/Esquema ER.pgerd`](../dbScripts/Esquema%20
 | `nombre` | `VARCHAR(150)` | `NOT NULL` | Nombre del curso. |
 | `modalidad` | `VARCHAR(50)` | — | Modalidad del curso. |
 | `fecha_inicio` | `DATE` | — | Fecha de inicio. |
+| `fecha_fin` | `DATE` | — | Fecha de finalización; no puede ser anterior a `fecha_inicio`. |
 | `hora_inicio` | `TIME` | — | Hora de inicio. |
 | `hora_fin` | `TIME` | — | Hora de finalización. |
 

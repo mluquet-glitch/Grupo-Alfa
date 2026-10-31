@@ -390,9 +390,12 @@ CREATE TABLE cursos_capacitacion (
     nombre VARCHAR(150) NOT NULL,
     modalidad VARCHAR(50),
     fecha_inicio DATE,
+    fecha_fin DATE,
 	hora_inicio TIME,
 	hora_fin TIME,
-	
+
+    CONSTRAINT chk_cursos_capacitacion_fechas
+        CHECK (fecha_inicio IS NULL OR fecha_fin IS NULL OR fecha_fin >= fecha_inicio),
 
     CONSTRAINT fk_cursos_convocatorias
         FOREIGN KEY (id_convocatoria)
