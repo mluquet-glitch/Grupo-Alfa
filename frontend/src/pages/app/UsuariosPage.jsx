@@ -1,7 +1,9 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import { useCrud } from "../../hooks/useCrud"
 import { ENTITIES } from "../../config/entities"
 import DataTable from "../../components/dashboard/DataTable"
+import Pagination from "../../components/ui/Pagination"
 import Skeleton from "../../components/ui/Skeleton"
 import ErrorFallback from "../../components/ui/ErrorFallback"
 import {
@@ -15,8 +17,10 @@ import {
 import { fetchRoleCatalog, updateUsuarioRoles } from "../../services/usersService"
 
 const UsuarioFormModal = lazy(() => import("../../components/features/usuarios/UsuarioFormModal"))
+const CrudPanel = lazy(() => import("../../components/dashboard/CrudPage"))
 
 const PAGE_SIZE = 25
+const USERS_TABS = ["usuarios", "asesores", "administrativos", "apoderados", "estudiantes"]
 const entity = ENTITIES.usuarios
 
 function toIdApoderado(value) {
@@ -39,10 +43,27 @@ async function persistSystemRoles(idUsuario, roles) {
 }
 
 export default function UsuariosPage() {
+  const [searchParams] = useSearchParams()
+  const requestedTab = searchParams.get("tab")
+  const activeTab = USERS_TABS.includes(requestedTab) ? requestedTab : "usuarios"
+
+  if (activeTab !== "usuarios") {
+    return (
+      <Suspense fallback={<Skeleton lines={6} />}>
+        <CrudPanel key={activeTab} entity={ENTITIES[activeTab]} />
+      </Suspense>
+    )
+  }
+
+  return <UsuariosTab />
+}
+
+function UsuariosTab() {
   const { items, isLoading, error, selected, setSelected, reload, save, remove } = useCrud(entity)
   const [roleMap, setRoleMap] = useState(null)
   const [roleCatalog, setRoleCatalog] = useState([])
   const [search, setSearch] = useState("")
+  const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState("")
@@ -83,7 +104,13 @@ export default function UsuariosPage() {
     )
   }, [rows, search])
 
-  const visible = useMemo(() => filtered.slice(0, PAGE_SIZE), [filtered])
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+
+  const visible = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE
+    return filtered.slice(start, start + PAGE_SIZE)
+  }, [filtered, currentPage])
 
   const openCreate = useCallback(() => {
     setSelected(null)
@@ -268,7 +295,10 @@ export default function UsuariosPage() {
           type="search"
           placeholder="Buscar en Usuarios..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value)
+            setPage(1)
+          }}
           aria-label="Buscar"
         />
         <label
@@ -306,9 +336,10 @@ export default function UsuariosPage() {
         </Suspense>
       )}
       <p className="muted">
-        {filtered.length} registro(s){filtered.length > PAGE_SIZE ? ` (mostrando ${PAGE_SIZE})` : ""}
+        {filtered.length} registro(s)
       </p>
       <DataTable rows={visible} columns={entity.columns} pk={entity.pk} onEdit={openEdit} onDelete={handleDelete} />
+      <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
       {modalOpen && selected && (
         <Suspense fallback={<Skeleton lines={4} />}>
           <UsuarioFormModal

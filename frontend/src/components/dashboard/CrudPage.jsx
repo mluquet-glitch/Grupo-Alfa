@@ -3,6 +3,7 @@ import PropTypes from "prop-types"
 import { useCrud } from "../../hooks/useCrud"
 import DataTable from "./DataTable"
 import Button from "../ui/Button"
+import Pagination from "../ui/Pagination"
 import Skeleton from "../ui/Skeleton"
 import ErrorFallback from "../ui/ErrorFallback"
 
@@ -14,6 +15,7 @@ export default function CrudPage({ entity }) {
   const { items, isLoading, error, selected, setSelected, reload, save, remove } = useCrud(entity)
   const [search, setSearch] = useState("")
   const [filterMateria, setFilterMateria] = useState("")
+  const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState("")
@@ -31,7 +33,13 @@ export default function CrudPage({ entity }) {
     })
   }, [items, search, filterMateria, entity])
 
-  const visible = useMemo(() => filtered.slice(0, PAGE_SIZE), [filtered])
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+
+  const visible = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE
+    return filtered.slice(start, start + PAGE_SIZE)
+  }, [filtered, currentPage])
 
   const openCreate = useCallback(() => {
     setSelected(null)
@@ -90,6 +98,7 @@ export default function CrudPage({ entity }) {
   )
 
   const applyFilter = () => {
+    setPage(1)
     reload(entity.key === "temas" && filterMateria ? { id_materia: filterMateria } : undefined)
   }
 
@@ -105,7 +114,10 @@ export default function CrudPage({ entity }) {
           type="search"
           placeholder={`Buscar en ${entity.label}...`}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value)
+            setPage(1)
+          }}
           aria-label="Buscar"
         />
         {entity.filterable && (
@@ -114,7 +126,10 @@ export default function CrudPage({ entity }) {
               type="number"
               placeholder="ID materia"
               value={filterMateria}
-              onChange={(e) => setFilterMateria(e.target.value)}
+              onChange={(e) => {
+                setFilterMateria(e.target.value)
+                setPage(1)
+              }}
               aria-label="Filtrar por materia"
             />
             <Button variant="secondary" size="sm" onClick={applyFilter}>
@@ -127,9 +142,10 @@ export default function CrudPage({ entity }) {
         </Button>
       </div>
       <p className="muted">
-        {filtered.length} registro(s){filtered.length > PAGE_SIZE ? ` (mostrando ${PAGE_SIZE})` : ""}
+        {filtered.length} registro(s)
       </p>
       <DataTable rows={visible} columns={entity.columns} pk={entity.pk} onEdit={openEdit} onDelete={handleDelete} />
+      <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
       {modalOpen && (
         <Suspense fallback={<Skeleton lines={4} />}>
           <EntityFormModal

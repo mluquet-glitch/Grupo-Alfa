@@ -463,6 +463,42 @@ button:disabled {
   outline-offset: 2px;
 }
 
+/* Navegación superior por módulo */
+.module-navbar {
+  display: flex;
+  gap: 4px;
+  margin-top: 20px;
+  padding: 0 32px;
+  background: #ffffff;
+  border-top: 1px solid #dbe5f2;
+  border-bottom: 1px solid #dbe5f2;
+  overflow-x: auto;
+}
+
+.module-navbar-link {
+  border-bottom: 3px solid transparent;
+  color: #5b6b82;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 16px 9px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
+}
+
+.module-navbar-link:hover,
+.module-navbar-link:focus-visible {
+  background: #f5fbff;
+  color: #1976d2;
+  outline: none;
+}
+
+.module-navbar-link.active {
+  background: #f5fbff;
+  border-bottom-color: #2196f3;
+  color: #1976d2;
+}
+
 /* Perfil del usuario */
 .profile-page {
   max-width: 880px;
@@ -850,6 +886,19 @@ button:disabled {
   white-space: nowrap;
 }
 
+.pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.pagination button {
+  margin-top: 0;
+}
+
 .actions {
   white-space: nowrap;
 }
@@ -1151,7 +1200,8 @@ button.small {
   }
 
   .dashboard-header,
-  .dashboard-content {
+  .dashboard-content,
+  .module-navbar {
     padding-left: 20px;
     padding-right: 20px;
   }

@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "react-router-dom"
+import PropTypes from "prop-types"
 import { useCrud } from "../../hooks/useCrud"
 import { ENTITIES, getDisplayName } from "../../config/entities"
 import { listResource } from "../../services/academicService"
@@ -67,7 +68,7 @@ function useOptions(catalogs) {
   }, [catalogs])
 }
 
-function MatriculacionesTab({ catalogs, options }) {
+function MatriculacionesTab({ options }) {
   const entity = ENTITIES.matriculaciones
   const { items, isLoading, error, selected, setSelected, reload, save, remove } = useCrud(entity)
   const [search, setSearch] = useState("")
@@ -152,7 +153,7 @@ function MatriculacionesTab({ catalogs, options }) {
   )
 }
 
-function MensualidadesTab({ catalogs, options }) {
+function MensualidadesTab({ options }) {
   const entity = ENTITIES.mensualidades
   const { items, isLoading, error, selected, setSelected, reload, save, remove } = useCrud(entity)
   const [search, setSearch] = useState("")
@@ -224,45 +225,42 @@ function MensualidadesTab({ catalogs, options }) {
   )
 }
 
+const OPTION_PROP = PropTypes.shape({
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.string.isRequired,
+})
+
+const OPTIONS_PROP = PropTypes.shape({
+  estudianteOptions: PropTypes.arrayOf(OPTION_PROP).isRequired,
+  administrativoOptions: PropTypes.arrayOf(OPTION_PROP).isRequired,
+  cursoOptions: PropTypes.arrayOf(OPTION_PROP).isRequired,
+  estudianteById: PropTypes.instanceOf(Map).isRequired,
+  administrativoById: PropTypes.instanceOf(Map).isRequired,
+  cursoById: PropTypes.instanceOf(Map).isRequired,
+}).isRequired
+
+MatriculacionesTab.propTypes = { options: OPTIONS_PROP }
+MensualidadesTab.propTypes = { options: OPTIONS_PROP }
+
 export default function MatriculacionesPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const requestedTab = searchParams.get("tab")
   const active = TABS.includes(requestedTab) ? requestedTab : "matriculaciones"
   const { catalogs, isLoading } = useCatalogs()
   const options = useOptions(catalogs)
 
-  const handleTabChange = (key) => {
-    const next = new URLSearchParams(searchParams)
-    next.set("tab", key)
-    setSearchParams(next, { replace: true })
-  }
-
   if (isLoading) return <Skeleton lines={6} />
 
   return (
     <section>
-      <div className="toggle-group" role="tablist" aria-label="Módulos de matriculaciones">
-        {TABS.map((key) => (
-          <button
-            key={key}
-            role="tab"
-            aria-selected={active === key}
-            type="button"
-            className={active === key ? "toggle-chip active" : "toggle-chip"}
-            onClick={() => handleTabChange(key)}
-          >
-            {ENTITIES[key].label}
-          </button>
-        ))}
-      </div>
-      <p className="muted" style={{ marginTop: 12 }}>
+      <p className="muted">
         {active === "matriculaciones"
           ? "Relaciona estudiantes con cursos de capacitación."
           : "Registra los pagos mensuales de los estudiantes."}
       </p>
       {active === "matriculaciones"
-        ? <MatriculacionesTab catalogs={catalogs} options={options} />
-        : <MensualidadesTab catalogs={catalogs} options={options} />}
+        ? <MatriculacionesTab options={options} />
+        : <MensualidadesTab options={options} />}
     </section>
   )
 }

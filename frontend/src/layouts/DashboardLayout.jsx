@@ -1,6 +1,8 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import Sidebar from "../components/dashboard/Sidebar"
+import ModuleNavbar from "../components/dashboard/ModuleNavbar"
 import { ENTITIES } from "../config/entities"
+import { getModuleTabConfig } from "../config/moduleTabs"
 import { useAuth } from "../hooks/useAuth"
 
 export default function DashboardLayout() {
@@ -8,6 +10,7 @@ export default function DashboardLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const key = location.pathname.split("/")[2] ?? "dashboard"
+  const tabConfig = getModuleTabConfig(key)
   const title =
     key === "dashboard"
       ? "Dashboard"
@@ -45,6 +48,7 @@ export default function DashboardLayout() {
             </button>
           </div>
         </header>
+        <ModuleNavbar config={tabConfig} />
         <main className="dashboard-content">
           <Outlet />
         </main>
