@@ -43,7 +43,17 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || "https://handsome-growth-production-8f3f.up.railway.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Set-Cookie"],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(cookieParser());
 
